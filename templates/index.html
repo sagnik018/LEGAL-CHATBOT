@@ -2,20 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Lawyer Chatbot</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <link rel="icon" href="/static/assets/logo.png">
+    <title>Legal Advisor Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="chat-container">
-        <div class="chat-header">💼 AI Lawyer Chatbot</div>
-        <div id="chat-box" class="chat-box"></div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Ask me your legal queries..." autofocus>
-            <button onclick="sendMessage()">Send</button>
-        </div>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-md">
+        <h1 class="text-3xl font-bold mb-4 text-center">🧑‍⚖️ Legal Advisor Chatbot</h1>
+
+        <form method="POST" class="space-y-4">
+            <textarea name="query" rows="4" required class="w-full border p-3 rounded-md" placeholder="Describe your case or question..."></textarea>
+            
+            <div class="flex justify-center space-x-4">
+                <button name="mode" value="ai" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700">Get AI Legal Advice</button>
+                <button name="mode" value="search" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700">Search Old Cases</button>
+            </div>
+        </form>
+
+        {% if response %}
+            <div class="mt-8 bg-gray-50 p-5 rounded shadow">
+                {% if mode == 'search' %}
+                    <h2 class="text-xl font-semibold mb-2">Similar Case Found:</h2>
+                    <p><strong>Case No:</strong> {{ response.case_no }}</p>
+                    <p><strong>Petitioner:</strong> {{ response.pet }}</p>
+                    <p><strong>Respondent:</strong> {{ response.res }}</p>
+                    <p><strong>Pet. Advocate:</strong> {{ response.pet_adv }}</p>
+                    <p><strong>Res. Advocate:</strong> {{ response.res_adv }}</p>
+                    <p><strong>Bench:</strong> {{ response.bench }}</p>
+                    <p><strong>Judged By:</strong> {{ response.judgement_by }}</p>
+                    <p><strong>Date:</strong> {{ response.judgment_dates }}</p>
+                    <p><strong>Link:</strong> <a href="{{ response.link }}" class="text-blue-600 underline">{{ response.link }}</a></p>
+                {% elif mode == 'ai' %}
+                    <h2 class="text-xl font-semibold mb-2">AI Legal Advice:</h2>
+                    <p>{{ response }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
-    <script src="/static/js/chatbot.js"></script>
 </body>
 </html>

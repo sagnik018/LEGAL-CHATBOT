@@ -1,19 +1,21 @@
-from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
-from utils.legal_responses import generate_response
+from flask import Flask, render_template, request
+from chatbot import LegalChatbot
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
-CORS(app)
+app = Flask(__name__)
+bot = LegalChatbot("data/legal_data.csv")
 
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 def home():
-    return render_template('index.html')
+    response = None
+    mode = None
+    if request.method == "POST":
+        query = request.form["query"]
+        mode = request.form["mode"]
+        if mode == "search":
+            response = bot.get_case_match(query)
+        elif mode == "ai":
+            response = bot.get_ai_advice(query)
+    return render_template("index.html", response=response, mode=mode)
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    user_input = request.json.get("message")
-    response = generate_response(user_input)
-    return jsonify({"response": response})
-
-if __name__ == "_main_":
-    app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    app.run(debug=True)
